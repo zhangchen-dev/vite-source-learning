@@ -393,6 +393,7 @@ function optimizerResolvePlugin(
   resolveOptions: ResolvePluginOptionsWithOverrides,
 ): Plugin {
   const { root, asSrc } = resolveOptions
+  console.log('%c [ asSrc ]-396', 'font-size:13px; background:pink; color:#bf2c9f;', asSrc,'-------------',root)
 
   return {
     name: 'vite:resolve-dev',
@@ -415,6 +416,8 @@ function optimizerResolvePlugin(
         },
       },
       async handler(id, importer, resolveOpts) {
+        console.log('%c [ resolveOpts ]-419', 'font-size:13px; background:pink; color:#bf2c9f;', resolveOpts)
+        console.log('%c [ importer ]-419', 'font-size:13px; background:pink; color:#bf2c9f;', importer)
         // The resolve plugin is used for createIdResolver and the depsOptimizer should be
         // disabled in that case, so deps optimization is opt-in when creating the plugin.
         const depsOptimizer =
@@ -437,10 +440,12 @@ function optimizerResolvePlugin(
         // tryFileResolve or /fs/ resolution but these files may not yet
         // exists if we are in the middle of a deps re-processing
         if (asSrc && depsOptimizer.isOptimizedDepUrl(id)) {
+          console.log('%c [  ]-444', 'font-size:13px; background:pink; color:#bf2c9f;', )
           return moduleUrlToFilePath(id, root)
         }
 
         if (!isDataUrl(id) && !isExternalUrl(id)) {
+          console.log('%c [  ]-449', 'font-size:13px; background:pink; color:#bf2c9f;', )
           if (
             id[0] === '.' ||
             (options.preferRelative && startsWithWordCharRE.test(id))
@@ -452,9 +457,11 @@ function optimizerResolvePlugin(
             const normalizedFsPath = normalizePath(fsPath)
 
             if (depsOptimizer.isOptimizedDepFile(normalizedFsPath)) {
+              console.log('%c [  ]-461', 'font-size:13px; background:pink; color:#bf2c9f;',id )
               // Optimized files could not yet exist in disk, resolve to the full path
               // Inject the current browserHash version if the path doesn't have one
               if (!DEP_VERSION_RE.test(normalizedFsPath)) {
+                console.log('%c [  ]-465', 'font-size:13px; background:pink; color:#bf2c9f;', normalizedFsPath )
                 const browserHash = optimizedDepInfoFromFile(
                   depsOptimizer.metadata,
                   normalizedFsPath,
@@ -469,6 +476,8 @@ function optimizerResolvePlugin(
 
           // bare package imports, perform node resolve
           if (bareImportRE.test(id)) {
+            
+            console.log('%c [  ]-482', 'font-size:13px; background:pink; color:#bf2c9f;', )
             let res: string | PartialResolvedId | undefined
             if (
               asSrc &&
@@ -481,6 +490,7 @@ function optimizerResolvePlugin(
                 options.packageCache,
               ))
             ) {
+              console.log('%c [  ]-494', 'font-size:13px; background:pink; color:#bf2c9f;', )
               return res
             }
           }
