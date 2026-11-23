@@ -26,6 +26,10 @@ function testEnvQueryParamsPlugin() {
 
 export default defineConfig({
   plugins: [testEnvQueryParamsPlugin()],
+  optimizeDeps: {
+    // 排除这个包的预构建，让它走 finalizeBareSpecifier 路径
+    exclude: ['@vitejs/test-commonjs-dep'],
+  },
   define: {
     __EXP__: 'false',
     __STRING__: '"hello"',

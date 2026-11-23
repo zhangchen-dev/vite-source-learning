@@ -233,6 +233,7 @@ export function oxcResolvePlugin(
       (partialEnv, getEnv) => {
         // The resolve plugin is used for createIdResolver and the depsOptimizer should be
         // disabled in that case, so deps optimization is opt-in when creating the plugin.
+        console.log('[ resolveOptions ❀🌹人✔❤❀]-238', '==========2===== ', resolveOptions)
         const depsOptimizerEnabled =
           resolveOptions.optimizeDeps &&
           !resolveOptions.isBuild &&
@@ -255,6 +256,7 @@ export function oxcResolvePlugin(
           Array.isArray(options.noExternal) || options.noExternal === true
             ? options.noExternal
             : [options.noExternal]
+            console.log('[ depsOptimizerEnabled ❀🌹人✔❤❀]-298', depsOptimizerEnabled)
 
         const plugin = viteResolvePlugin({
           tsconfig: partialEnv.config.tsconfig,
@@ -297,6 +299,7 @@ export function oxcResolvePlugin(
           finalizeBareSpecifier: !depsOptimizerEnabled
             ? undefined
             : (resolvedId, rawId, importer) => {
+              console.log('[ resolvedId, rawId, importer ❀🌹人✔❤❀]-300', resolvedId, rawId, importer)
                 const depsOptimizer = getDepsOptimizer()
                 // if we reach here, it's a valid dep import that hasn't been optimized.
                 const isJsType = isOptimizable(
@@ -323,6 +326,7 @@ export function oxcResolvePlugin(
 
                 let newId = resolvedId
                 if (skipOptimization) {
+                  console.log('[  ❀🌹人✔❤❀]-329', )
                   // excluded from optimization
                   // Inject a version query to npm deps so that the browser
                   // can cache it without re-validation, but only do so for known js types.
@@ -333,6 +337,7 @@ export function oxcResolvePlugin(
                     newId = injectQuery(newId, `v=${versionHash}`)
                   }
                 } else {
+                  console.log('[  ❀🌹人✔❤❀]-340', '==========3===== ', rawId, newId)
                   // this is a missing import, queue optimize-deps re-run and
                   // get a resolved its optimized info
                   const optimizedInfo = depsOptimizer!.registerMissingImport(
@@ -341,6 +346,7 @@ export function oxcResolvePlugin(
                   )
                   newId = depsOptimizer!.getOptimizedDepId(optimizedInfo)
                 }
+                console.log('[ newId ❀🌹人✔❤❀]-346',rawId,'--------------', newId)
                 return newId
               },
           finalizeOtherSpecifiers: !depsOptimizerEnabled
@@ -353,6 +359,7 @@ export function oxcResolvePlugin(
                   options,
                   depsOptimizer,
                 )
+                console.log('[ resolvedId ❀🌹人✔❤❀]-363', resolvedId,newResolvedId)
                 return newResolvedId === resolvedId ? undefined : newResolvedId
               },
           resolveSubpathImports(id, importer, isRequire) {
@@ -416,8 +423,7 @@ function optimizerResolvePlugin(
         },
       },
       async handler(id, importer, resolveOpts) {
-        console.log('%c [ resolveOpts ]-419', 'font-size:13px; background:pink; color:#bf2c9f;', resolveOpts)
-        console.log('%c [ importer ]-419', 'font-size:13px; background:pink; color:#bf2c9f;', importer)
+        console.log('%c [ resolveOpts ]-419', 'font-size:13px; background:pink; color:#bf2c9f;', id)
         // The resolve plugin is used for createIdResolver and the depsOptimizer should be
         // disabled in that case, so deps optimization is opt-in when creating the plugin.
         const depsOptimizer =
@@ -443,9 +449,9 @@ function optimizerResolvePlugin(
           console.log('%c [  ]-444', 'font-size:13px; background:pink; color:#bf2c9f;', )
           return moduleUrlToFilePath(id, root)
         }
-
+        // data:xxxx || http://xxxx
         if (!isDataUrl(id) && !isExternalUrl(id)) {
-          console.log('%c [  ]-449', 'font-size:13px; background:pink; color:#bf2c9f;', )
+          console.log('%c [  ]-449', 'font-size:13px; background:pink; color:#bf2c9f;', id)
           if (
             id[0] === '.' ||
             (options.preferRelative && startsWithWordCharRE.test(id))
@@ -453,11 +459,11 @@ function optimizerResolvePlugin(
             const basedir = importer ? path.dirname(importer) : root
             const fsPath = path.resolve(basedir, id)
             // handle browser field mapping for relative imports
-
+            // 前缀协议标准化
             const normalizedFsPath = normalizePath(fsPath)
 
             if (depsOptimizer.isOptimizedDepFile(normalizedFsPath)) {
-              console.log('%c [  ]-461', 'font-size:13px; background:pink; color:#bf2c9f;',id )
+              console.log('[ normalizedFsPath ❀🌹人✔❤❀]-461', normalizedFsPath)
               // Optimized files could not yet exist in disk, resolve to the full path
               // Inject the current browserHash version if the path doesn't have one
               if (!DEP_VERSION_RE.test(normalizedFsPath)) {
@@ -470,6 +476,7 @@ function optimizerResolvePlugin(
                   return injectQuery(normalizedFsPath, `v=${browserHash}`)
                 }
               }
+              console.log('[ normalizedFsPath ❀🌹人✔❤❀]-475', normalizedFsPath)
               return normalizedFsPath
             }
           }
@@ -490,7 +497,7 @@ function optimizerResolvePlugin(
                 options.packageCache,
               ))
             ) {
-              console.log('%c [  ]-494', 'font-size:13px; background:pink; color:#bf2c9f;', )
+              console.log('%c [  ]-494', 'font-size:13px; background:pink; color:#bf2c9f;', res)
               return res
             }
           }
